@@ -1,0 +1,529 @@
+Fragekatalog 
+
+1. Nennen Sie verbreitete Arten von DBMS und jeweils einen Vertreter.
+
+Relatione DBMS (RDBMS) Postgresql, MySql
+Dokumentorientierte DBMS Mongo DB, Couch DB
+Graphen-Datenbanken Neo4j
+Key-Value-DB Redis, Amazon DynamoDB
+Column-Family DBMS Cassandra, HBase
+
+2. Welche Aspekte spielen bei der Auswahl eines DBMS eine große Rolle?
+ - Datenmenge
+ - Datenstruktur
+ - Skalierbarkeit
+ - Performance
+ - Anfragssprache
+ - Kosten
+ - Wichtigkeit der Relation
+ - Transaktionsbearbeitung
+ 
+3. Was versteht man unter Web-Scale-Infrastruktur?
+ - Skalierbarkeit
+ - für schnell wachsende Anzahl der Web-Daten und Anwendungen
+ -> Muss weiterhin schnell abrufbar spielen
+
+Eine Web-Scale-Infrastruktur, manchmal auch als Hyperscale-
+Infrastruktur bezeichnet, bezieht sich auf ein System oder 
+eine Infrastruktur, die in der Lage ist, mit dem 
+exponentiellen Wachstum von Web-Daten und Anwendungen 
+Schritt zu halten. Im Wesentlichen ist sie so konzipiert, 
+dass sie nahtlos skaliert werden kann, um den steigenden 
+Anforderungen an Speicher, Verarbeitung, Netzwerkbandbreite und Anwendungsleistung gerecht zu werden.
+Diese Art von Infrastruktur wurde populär durch große 
+Internet-Unternehmen wie Google, Facebook und Amazon, die 
+riesige Mengen an Daten und Anwendungen verwalten und 
+dabei ein gleichbleibend hohes Leistungsniveau 
+aufrechterhalten müssen. Web-Scale-Infrastrukturen 
+verwenden in der Regel Technologien wie verteilte 
+Datenbanken, Cloud-Computing und Automatisierungstechniken,
+ um Skalierbarkeit, Redundanz und hohe Verfügbarkeit zu 
+ erreichen.
+
+4. Grenzen Sie horizontale und vertikale Skalierung voneinander ab. 
+ a) horizontale:
+   - Skalierung nach außen (= verwenden vieler Datenbanken-
+   server, um mehr Kapazität zu haben und damit diese 
+   nicht zu groß wird)
+
+ Horizontale Skalierung, auch als Skalierung nach außen 
+ bekannt, bezieht sich auf das Hinzufügen mehrerer Server 
+ zu einer Pool-Ressource, um die Systemkapazität zu erhöhen. 
+ Im Kontext einer Datenbank bedeutet dies beispielsweise, dass 
+ mehr Datenbankserver zum System hinzugefügt werden, um die 
+ Datenmenge und die Anzahl der gleichzeitigen Anfragen, die 
+ das System verarbeiten kann, zu erhöhen. Horizontale 
+ Skalierung kann effektiv sein, um mit großem Verkehr und 
+ großen Datenmengen umzugehen, erfordert aber eine 
+ sorgfältige Planung und Implementierung, um Themen wie 
+ Datenkonsistenz und Komplexität der Datenverteilung zu 
+ adressieren.
+
+ b) vertikale:
+ - Verwendung eines einzelnen Servers, der mit Hardware 
+ aufgerüstet wird (Bsp. mit RAM, CPU oder Speicher)
+
+ Vertikale Skalierung, auch als Skalierung nach oben 
+ bekannt, bezieht sich auf das Hinzufügen mehr Ressourcen 
+ zu einem einzelnen Server, um dessen Kapazität zu erhöhen.
+ Dies könnte durch Hinzufügen von mehr RAM, CPU oder 
+  Speicher zu einem einzelnen Datenbankserver erreicht 
+  werden, um dessen Leistung zu verbessern. Vertikale 
+  Skalierung kann eine schnellere und einfachere Möglichkeit 
+  zur Verbesserung der Leistung eines Systems sein, hat 
+  jedoch natürliche Grenzen hinsichtlich der Menge an 
+  zusätzlichen Ressourcen, die zu einem einzelnen Server
+   hinzugefügt werden können.
+
+5. Wie werden relationale DBMS üblicherweise skaliert? Warum stößt dies an Grenzen?
+Ein relationale DBMS wird üblicherweise horizontal skaliert (Skalierung nach außen), diese jedoch an Grenzen stoßt weil:
+Ein einzelner Server hat eine Begrenzung für die Größe (CPU, RAM, usw...)
+Der Preis skaliert nicht linear (ein Server mit 8 CPUs kostet mehr als das Vierfache von vier Servern mit 2 CPUs)
+Die Leistung skaliert auch nicht linear (bei mehr CPUs und Speicher führen zu Engpässen bei Disk- und Netzwerkdurchsatz)
+Weiterhin besteht die Frage der Ausfallsicherheit (Was wenn der eine größe Server ausfällt?)
+Auch die Frage der Netzwerkleistung bleibt unbeantwortet (Wie bekommt man die Daten nahe zu den geograsch verteilten Benutzern?)
+
+Die Lösung: In die Breite Skalieren! (gehe daavon aus Vertikale Skalierung)
+
+6. Was versteht man unter Sharding? Nennen Sie Beispiele, wie Sharding ACID einschränkt.
+Eine große Datenbank wird in viele kleinere aufgeteilt, für die horizontale Skalierung
+
+Anhand von bestimmten Kriterien wird eine größe DB in 
+kleinere aufgeteilt (z.B. alle Benutzer mit dem Nachnamen 
+A-I auf Server A, J-Q auf Server B und R-Z auf Server C)
+
+Atomicity: Atomicity bezieht sich auf die Eigenschaft, dass
+ eine Transaktion entweder vollständig ausgeführt wird oder
+  überhaupt nicht. Bei einer verteilten Datenbank, die 
+  Sharding verwendet, kann es schwierig sein, Atomizität 
+  über mehrere Shards hinweg aufrechtzuerhalten, 
+  insbesondere wenn eine Transaktion mehrere Shards 
+  betrifft. Wenn zum Beispiel eine Transaktion zwei 
+  Shards aktualisieren muss und einer der Shards ausfällt, 
+  kann es schwierig sein, die Transaktion korrekt rückgängig zu machen.
+
+Consistency: Consistency bedeutet, dass die Datenbank nach jeder Transaktion in einem konsistenten Zustand bleiben muss. Bei einer geshardeten Datenbank kann es jedoch Herausforderungen geben, eine globale Konsistenz aufrechtzuerhalten, da Aktualisierungen über mehrere Shards hinweg synchronisiert werden müssen. Dies kann zu einem Zustand führen, der als "eventual consistency" bekannt ist, bei dem die Datenbanken letztendlich konsistent werden, aber es kann eine gewisse Verzögerung geben.
+
+Isolation: Isolation bedeutet, dass jede Transaktion unabhängig von anderen ausgeführt werden sollte. In einer geshardeten Datenbank kann es jedoch schwierig sein, Isolation aufrechtzuerhalten, insbesondere wenn Transaktionen mehrere Shards betreffen. Dies kann zu Problemen wie Dirty Reads oder Phantom Reads führen.
+
+Durability: Durability bedeutet, dass sobald eine Transaktion abgeschlossen ist, die Änderungen dauerhaft in der Datenbank gespeichert werden, selbst im Falle eines Systemausfalls. In einer geshardeten Datenbank kann die Gewährleistung der Haltbarkeit über mehrere Shards hinweg eine Herausforderung sein, insbesondere wenn es zu Netzwerk- oder Serverausfällen kommt.
+
+7. Was versteht man unter Replikation von DB?
+ - Daten zwischen Servern kopieren, entweder innerhalb des 
+ DBMS oder auf der Storage-Ebene
+ 
+ Die Replikation in Datenbanken bezeichnet den Prozess der Kopierung und Verteilung von Daten und Datenbankobjekten von einer Datenbank zu einer anderen und die Synchronisation dieser Daten, um eine konsistente Datenlandschaft zu gewährleisten.
+8. Was besagt das CAP-Theorem?
+
+Das CAP-Theorem, auch bekannt als Brewer's Theorem, besagt, dass ein verteiltes Computersystem nur zwei der folgenden drei Garantien gleichzeitig erfüllen kann:
+
+Consistency (Konsistenz): Alle Knoten sehen die gleichen Daten zur gleichen Zeit. Nach einer erfolgreichen Transaktion hat jeder Knoten die aktuellsten Daten.
+
+Availability (Verfügbarkeit): Jede Anfrage erhält eine Antwort, unabhängig davon, ob ein oder mehrere Knoten ausfallen.
+
+Partition Tolerance (Partitionstoleranz): Das System funktioniert weiterhin, selbst wenn die Kommunikation zwischen den Knoten wegen Netzwerkfehlern unterbrochen wird.
+
+Das CAP-Theorem stellt klar, dass bei der Ausarbeitung 
+eines verteilten Systems Kompromisse gemacht werden müssen.
+In der Praxis bedeutet dies, dass Entwickler entscheiden 
+müssen, welches Element in Szenarien, in denen 
+Netzwerkausfälle auftreten können, priorisiert werden soll.
+(ZSMF. F. 15)
+
+9. Warum verletzt CAP das ACID-Prinzip? 
+ - Wenn das System bei einem
+Netzwerkausfall verfügbar bleiben soll,
+mu? die consistency aufgegeben
+werden
+- Wenn das System konsistent bleiben
+soll mu? man die Verfügbarkeit
+(availability) aufgeben
+
+10. Was versteht man unter BASE? Nennen Sie wesentliche Unterschiede zu ACID?
+
+Basically Available
+ - Das System ist immer verfügbar (evtl. nicht im besten Zustand, aber es
+ist verfügbar!)
+Soft-State
+ - Die Datenspeicher müssen nicht konsistent sein und dürfen sich über
+die Zeit verändern
+Eventual consistency
+ - Die Datenspeicher werden irgendwann einen konsistenten Zustand
+erreichen
+
+=> Die consistency  als Anforderung wird hier unterschieden. 
+Bei ACID wird eher mit consistency gearbeitet, wobei bei 
+BASE nicht verwendet wird.
+
+Im Grunde genommen bietet ACID starke Konsistenzgarantien auf Kosten der Verfügbarkeit in verteilten Systemen, während BASE eine höhere Verfügbarkeit und Toleranz gegenüber Netzwerkfehlern bietet, aber mit schwächeren Konsistenzgarantien. Es handelt sich eher um zwei Enden eines Spektrums, auf dem Systemdesigner entscheiden müssen, wo sie sich basierend auf den spezifischen Anforderungen ihrer Anwendung positionieren.
+
+11. Nennen Sie wesentliche Merkmale relationaler Datenbanken.
+ - zweidimensionale Tabellen mit Zeilen und Spalten
+ - Basierend auf die Mengenlehre und der relationalen Algebra
+ - bestimmmtes Shema (Struktur)
+ - Datentyp typisiert
+ - Interagierend mit SQL
+
+12. Nennen Sie wesentliche Merkmale von Column Family.
+- Ähnelt einer relationalen Datenbank
+- Zeilen haben eine beliebige Anzahl von "coloumn Families (cf)"
+- Jede cf hat eine beliebige Anzahl von column qualifiers,
+die sich von Zeile zu Zeile unterscheiden können
+ - Spalten können einfach pro Zeile hinzugefügt werden
+ - eingebaute Versionsverwaltung
+
+(Zeile = Mini-DB)
+
+13. Nennen Sie wesentliche Merkmale von Document-Datenbanken
+- Speichern documents (Format: JSON/ XML)
+- Abfragen über Attribute (serverseitige Joins nicht!)
+- wenig Ansprüche an eingehende Daten, solange sie als document ausgedrückt werden können
+- basierend auf OOP
+- Datenstrukturen können im laufenden Betrieb hinzugefügt werden
+
+14. Nennen Sie wesentliche Merkmale von Graph-Datenbanken.
+- graphikstruktur
+- noSQL DB
+- flexibles Schema
+- Einhaltung des ACID
+
+15.Nennen Sie wesentliche Merkmale von Key-Value-Datenbanken.
+- einfachste Form
+- Schlüssel zu den dementsprechenden Werten Hinzufügen
+- für Komplexe Abfragen ungeeignet, aber schnell
+- gut geeignet als Zwischenspeicher für unkritische Daten/ Message Broker
+
+16. Auf welchem Prinzip basiert Hadoop?
+Prinzip der Datenlokalität: 
+Darunter ist zu verstehen, dass Verarbeitungsprozesse wie 
+etwa ein MapReduce Algorithmus zu den Daten gebracht wird, 
+statt die Daten zum Algorithmus zu bringen.
+
+17. In welchen Fällen würden Sie HBase einsetzen? Wann eher nicht?
+HBase ist eine skalierbare, verteilte und spaltenorientierte 
+Datenbank, die auf dem Hadoop-Dateisystem (HDFS) aufbaut. 
+Sie ist insbesondere dann geeignet, wenn es um die 
+Verwaltung von sehr großen Datenmengen geht, die über 
+mehrere Maschinen verteilt sind. Hier sind einige 
+spezifische Szenarien, in denen HBase sinnvoll eingesetzt 
+werden kann:
+
+Große Datenmengen:
+- eignet sich gut für Szenarien, in denen riesige Mengen 
+von Daten (in der Größenordnung von Millionen oder 
+Milliarden von Zeilen) schnell geschrieben und gelesen 
+werden müssen. Es bietet die Möglichkeit, horizontal zu 
+skalieren, indem man einfach weitere Knoten hinzufügt.
+
+Spaltenorientierte Fälle: 
+Wenn Sie oft auf bestimmte Spalten Ihrer Daten zugreifen 
+müssen, anstatt ganze Zeilen zu lesen, ist HBase eine gute 
+Wahl. Bei spaltenorientierten Zugriffsmustern kann HBase 
+effizienter sein als zeilenorientierte Datenbanksysteme.
+
+Real-Time Querying: 
+HBase ist eine gute Wahl für Echtzeitabfragen und -analysen auf großen Datenmengen, wie sie häufig in der Finanzindustrie, dem Internet der Dinge (IoT) oder im Bereich der Telekommunikation vorkommen.
+
+Es gibt jedoch auch Szenarien, in denen der Einsatz von 
+HBase nicht ideal wäre:
+
+Kleine Datenmengen: 
+Für kleine Datenmengen kann HBase überdimensioniert sein 
+und mehr Ressourcen als notwendig verbrauchen. Traditionelle relationale Datenbanksysteme oder kleinere NoSQL-Datenbanken könnten in solchen Fällen besser geeignet sein.
+
+Komplexe SQL-Abfragen und -Transaktionen: 
+HBase unterstützt kein vollständiges SQL und keine komplexen Transaktionen, die mehrere Operationen oder mehrere Zeilen umfassen. Wenn solche Abfragen oder Transaktionen wichtig sind, wäre eine relationale Datenbank oder ein anderes NoSQL-System, das umfangreichere Transaktionsmöglichkeiten bietet, besser geeignet.
+
+Stark normalisierte Daten: 
+HBase eignet sich nicht gut für stark normalisierte Daten und Beziehungen zwischen Tabellen. Für solche Anwendungsfälle sind relationale Datenbanken besser geeignet.
+
+18. Grenzen Sie Column Family und Column Store voneinander ab.
+
+Coloumn Family:
+- basieren auf der Bigtable-Struktur von Google
+  -> Daten werden als Zeilen gespeichert und abgefragt (Row Store)
+ 
+Coloumn Store:
+- sind relational undwerden vor allemfür Data warehouse
+Anwendungen verwendet
+ -> Daten werden als Spalte gespeichert und abgefragt (Coloumn Store)
+
+19. Bietet HBase Versionierung von Daten? Wenn ja, was ist hierfür notwendig?
+Ja, Zeitstempel(Unix epoch) ist notwendig
+
+20. Was versteht man unter Scan Filtering in HBase?
+ Mechanismus zur Einschränkung der Ergebnisse einer Abfrage. 
+ Bei der Durchführung eines Scans in HBase, das heißt, 
+ wenn Sie eine Reihe von Zeilen in einer Tabelle lesen, 
+ können Sie einen Filter anwenden, um nur die Zeilen oder 
+ Spalten zurückzugeben, die bestimmte Kriterien erfüllen.
+
+21. Was bewirkt der Befehl scan 'customers', {COLUMNS => 'details:name', FILTER =>
+“ValueFilter(=,'binary:Amy')“} auf einer HBase DB?
+
+- ValueFilter(), dieser bewirkt das einfache Suchen nach
+Werten
+- alle Werte in HBase werden binär behandelt, deswegen
+ist eine Umwandlung in binär nötig.
+
+Der Befehl führt einen Scan auf der 'customers'-Tabelle in HBase aus und wendet dabei einen spezifischen Filter an.
+
+Der Teil {COLUMNS => 'details:name'} besagt, dass nur die Spalte 'name' aus der Column Family 'details' zurückgegeben werden soll. Das bedeutet, der Scan wird nur Werte aus dieser spezifischen Spalte berücksichtigen.
+
+Der FILTER => "ValueFilter(=,'binary:Amy')" Teil ist ein Filter, der nur die Zellen zurückgibt, deren Werte gleich 'Amy' sind. Der 'binary'-Teil gibt dabei das Vergleichsformat an - in diesem Fall wird ein binärer Vergleich durchgeführt.
+
+Zusammengenommen bedeutet der gesamte Befehl, dass ein Scan auf der 'customers'-Tabelle ausgeführt wird, der nur die 'name'-Spalte in der 'details'-Column Family berücksichtigt und nur die Zeilen zurückgibt, bei denen der Wert dieser Spalte 'Amy' ist.
+
+22. Was ist Hive und wofür wird es verwendet?
+
+-übersetzt SQL-Ähnliche Abfragen in MapReduce-Jobs
+
+- Um die Interaktion mit Handoop zu erleichtern
+-> Hantierung mit verschiedenen Daten und auslesung 
+von Daten aus HBase
+
+23. Was ist HQL und wofür wird es verwendet?
+= Hive Query Language
+- primäre Abfragesprache, die von Apache Hive verwendet 
+wird, einem Data-Warehouse-Infrastruktursystem auf Hadoop. 
+HQL ist eine SQL-ähnliche Abfragesprache, die entwickelt 
+wurde, um Abfragen und Manipulationen auf datenintensiven 
+verteilten Systemen zu ermöglichen.
+
+Die Hauptmerkmale und Anwendungen von HQL sind:
+
+SQL-ähnliche Syntax: 
+HQL verwendet eine Syntax, die stark an SQL angelehnt ist. 
+Dies ermöglicht es Datenanalysten und Entwicklern, die 
+bereits mit SQL vertraut sind, Hadoop-Daten ohne 
+zusätzliche Schulungen zu analysieren.
+
+Integration mit Hadoop: 
+Da Hive und HQL auf Hadoop aufbauen, können sie direkt 
+auf in Hadoop gespeicherte Daten zugreifen und die 
+Skalierbarkeit und Verteilung von Hadoop nutzen.
+
+Data Warehousing-Funktionen: 
+Mit HQL können Benutzer Daten partitionieren, indizieren 
+und andere typische Data-Warehousing-Aufgaben durchführen. 
+Dies macht es zu einer geeigneten Wahl für die 
+Durchführung von Abfragen und Analysen auf großen 
+Datenmengen.
+
+Unterstützung für MapReduce: 
+Obwohl HQL eine SQL-ähnliche Abfragesprache ist, wird jede 
+HQL-Abfrage letztendlich in einen oder mehrere 
+MapReduce-Jobs umgewandelt, die auf Hadoop ausgeführt 
+werden. Dies bedeutet, dass HQL die Fähigkeiten von 
+MapReduce nutzen kann, um komplexe Datenverarbeitungsaufgaben auszuführen.
+
+HQL wird in erster Linie für datenintensive Aufgaben wie die Datenexploration, die Datenanalyse und die ETL-Datenverarbeitung (Extraktion, Transformation, Laden) eingesetzt. Es ist wichtig zu beachten, dass HQL, wie Hive selbst, nicht für Echtzeit-Abfragen oder geringe Latenzanforderungen optimiert ist. Es ist besser geeignet für Batch-Verarbeitungsaufgaben und komplexe Abfragen über große Datensätze.
+
+24. In welchen Fällen würden Sie MongoDB einsetzen? Wann eher nicht?
+- Bei einer sehr großen Menge an unstrukturierten Daten
+- Um Objekte zu speichern (Einfache Standardisierung & Deserialisierung)
+
+25. Was versteht man unter einem Dokument in einer MongoDB? Welche Formate sind hier
+üblich?
+- ähnelt Zeilen in einer relationalen DB
+- Format JSON/BSON (binary)
+- Dokument übergreifend, keine gleichen Attribute notwendig
+
+26. Welche Vor- und Nachteile besitzt JSON gegenüber XML?
+- JSON ist kompakter
+- JSON erlaubt Felder
+- JSON passt bessert zum Ansatz OOP
+
+27. Was sind übliche Bestandteile eines JSON-Dokuments?
+- aus Paaren von Namen (attribut) und Wert
+- Werte der Attribute haben 1 von 6 Datentypen
+- Objekte können weitere Objekte beinhalten
+
+28. Was ist eine Collection in MongoDB? Erläutern Sie wichtige Eigenschaften.
+- in einer collection sind ähnliche documents zusammengefasst
+ -> document ähnelt einer Zeile in RDBMS
+ -> collection ähnelt einer Tabelle in RDBMS
+ -> documents in einer collection müssen NICHT die selben Attribute
+haben
+
+29. Was versteht man unter _id in MongoDB und woraus besteht es?
+- _id ist ein Attribute
+- automatisch generiert
+- 12 Byte großer, hexadezimaler Schlüssel (fast immer eindeutig)
+
+30. Was bewirkt der Befehl 
+db.students.find({wochenstunden: {$lt : 40}}) 
+in einer MongoDB DB?
+Welche SQL-Abfrage würde dem Befehl in einer relationalen DB entsprechen?
+
+- Man sucht anhand einer anderen Attribute
+- $lt statt <
+- $gt statt >
+- $eq statt =
+- $ne statt !=
+
+Der MongoDB-Befehl 
+db.students.find({wochenstunden: {$lt : 40}}) führt eine 
+Suche in der students-Kollektion durch und gibt alle 
+Dokumente zurück, bei denen der Wert des wochenstunden-
+Feldes kleiner als 40 ist.
+
+In SQL, der Abfragesprache relationaler Datenbanken, würde 
+eine äquivalente Abfrage etwa so aussehen:
+SELECT * FROM students WHERE wochenstunden < 40;
+Diese SQL-Abfrage würde alle Zeilen in der students-Tabelle
+ zurückgeben, bei denen der Wert in der Spalte 
+ wochenstunden kleiner als 40 ist. Es ist wichtig zu 
+ beachten, dass die Struktur und Syntax von SQL und 
+ MongoDB-Abfragen unterschiedlich ist, da sie für 
+ unterschiedliche Arten von Datenbanken entwickelt wurden 
+ - SQL für relationale Datenbanken und MongoDB für 
+ dokumentenorientierte NoSQL-Datenbanken.
+
+31. Was versteht man unter der Operation upsert?
+Die Operation "upsert" ist eine Kombination der Wörter 
+"update" und "insert" und bezieht sich auf eine spezielle 
+Datenbankoperation, die verwendet wird, um einen Datensatz 
+zu aktualisieren, falls er existiert, andernfalls einen 
+neuen Datensatz einzufügen.
+
+32. Was bewirkt der Befehl db.uscounties.find({TotalPop:{$gt:2000000}, $and:[{State:{$ne:
+California }, State:{$ne: New York }}]},{_id:0, County:1, State:1, TotalPop:1, Transit:1}) in einer
+MongoDB DB? Welche SQL-Abfrage würde dem Befehl in einer relationalen DB entsprechen?
+
+(ab F. 136/140)
+
+Der MongoDB-Befehl db.uscounties.find({TotalPop:{$gt:2000000}, $and:[{State:{$ne: California }, State:{$ne: New York }}]},{_id:0, County:1, State:1, TotalPop:1, Transit:1}) führt eine Suche in der uscounties-Kollektion durch und gibt bestimmte Felder der Dokumente zurück, die bestimmte Bedingungen erfüllen.
+
+Der Befehl sucht nach Dokumenten, bei denen das Feld TotalPop größer als 2.000.000 ist und das Feld State weder "California" noch "New York" entspricht. Die zurückgegebenen Felder für jedes übereinstimmende Dokument sind County, State, TotalPop und Transit, wobei das _id-Feld ausgeschlossen wird.
+
+Eine äquivalente SQL-Abfrage in einer relationalen Datenbank könnte wie folgt aussehen:
+SELECT County, State, TotalPop, Transit FROM uscounties WHERE TotalPop > 2000000 AND State <> 'California' AND State <> 'New York';
+Diese SQL-Abfrage würde die Spalten County, State, TotalPop und Transit aus der Tabelle uscounties zurückgeben, wobei die Bedingungen TotalPop > 2000000 und State <> 'California' AND State <> 'New York' erfüllt sein müssen.
+
+33. In welchen Fällen würden Sie Neo4j einsetzen? Wann eher nicht?
+- einfachen lesbarkeit 
+- Bezieungen/Relationen im Mittelpunkt
+- häufig über Relationen traversiert
+- eher nicht bei Daten, die eine Filterung/
+Strukturierte Durchsuchbarkeit im Zentrum
+
+(Eigenschaften F. 145)
+
+34. Was ist Cypher? Wofür wird es eingesetzt?
+- musterbasierte Sprache
+- verwendet ASCII- Art
+- für Graphische Datenbanken
+
+35. Bietet Neo4j Indizes? Wenn ja, wofür werden sie verwendet?
+ja, nur für Einstieg in den Graph zu finden
+(F.179)
+
+36. Bietet Neo4j Constraints? Wenn ja, wofür werden sie verwendet?
+ja, um auf ein bestehendes Index wird automatisch ein Index erstellt,
+für den Fall wenn es keine gibt
+
+37. In welchen Fällen würden Sie Redis einsetzen? Wann eher nicht?
+=REmote DIctionary Service
+
+Redis ist eine In-Memory-Datenbank, die für die Hochgeschwindigkeitsverarbeitung und -speicherung von Daten optimiert ist. Hier sind einige Fälle, in denen der Einsatz von Redis sinnvoll sein kann:
+
+Caching: Redis eignet sich sehr gut als Cache-Speicher für häufig abgerufene oder berechnete Daten. Es ermöglicht schnellen Zugriff auf vorab berechnete Ergebnisse und kann die Leistung von Anwendungen verbessern, indem es Daten direkt im Speicher hält und den Zugriff auf langsame Datenquellen reduziert.
+
+Echtzeit-Anwendungen: Redis bietet eine hohe Leistung und geringe Latenz, wodurch es ideal für Echtzeit-Anwendungen wie Echtzeit-Analytik, Echtzeit-Benachrichtigungen, Sitzungsverwaltung, Echtzeit-Statistiken und Echtzeit-Chat-Funktionen ist.
+
+Message Broker: Redis unterstützt auch die Implementierung von Publish-Subscribe-Messaging-Mustern. Es kann als Message Broker verwendet werden, um Nachrichten zwischen verschiedenen Teilen einer Anwendung zu veröffentlichen und zu empfangen.
+
+Zähler und Ranglisten: Redis bietet Datentypen wie Zähler und sortierte Mengen, die sich gut für die Verfolgung von Statistiken, Bewertungen, Ranglisten und Zählungen eignen. Sie ermöglichen schnelle inkrementelle Aktualisierungen und Abfragen von aggregierten Daten.
+
+Es gibt jedoch auch Fälle, in denen der Einsatz von Redis möglicherweise nicht angemessen ist:
+
+Dauerhafte Datenspeicherung: Redis ist standardmäßig als In-Memory-Datenbank konzipiert und eignet sich nicht gut für die dauerhafte Speicherung großer Datenmengen. Wenn Sie eine persistente Datenspeicherung mit hoher Kapazität benötigen, sollten Sie alternative Datenbanksysteme in Betracht ziehen.
+
+Komplexe Abfragen: Redis bietet keine umfangreichen Abfragefunktionen wie SQL oder komplexe Aggregationen. Wenn Sie komplexe Abfragen oder komplexe Datenmanipulationen benötigen, die über die grundlegenden CRUD-Operationen hinausgehen, könnte ein relationales Datenbanksystem besser geeignet sein.
+
+Hohe Konsistenzanforderungen: Redis unterstützt keine Transaktionen, die über einzelne Datenoperationen hinausgehen. Wenn Ihre Anwendung hohe Konsistenzanforderungen hat und Atomizität über mehrere Operationen hinweg benötigt, sollten Sie alternative Datenbanksysteme mit stärkeren Konsistenzgarantien in Betracht ziehen.
+
+Es ist wichtig, die spezifischen Anforderungen Ihrer Anwendung zu berücksichtigen und zu prüfen, ob Redis die besten Funktionen und Eigenschaften bietet, um diese Anforderungen zu erfüllen.
+
+38. Was versteht man unter einer In-Memory-Datenbank? Welche Vor- und Nachteile birgt sie?
+Eine In-Memory-Datenbank ist eine Datenbank, bei der die gesamten Daten im Hauptspeicher (RAM) des Computers gehalten werden, im Gegensatz zur herkömmlichen Speicherung auf Festplatten oder anderen langsameren Medien. In-Memory-Datenbanken nutzen die schnelle Zugriffsgeschwindigkeit des RAMs, um Datenverarbeitung und -abfragen zu beschleunigen.
+
+Einige Vor- und Nachteile von In-Memory-Datenbanken sind:
+
+Vorteile:
+
+Schnelle Datenzugriffsgeschwindigkeit: Der Zugriff auf Daten im Hauptspeicher ist wesentlich schneller als der Zugriff auf Daten auf Festplatten oder anderen Speichermedien. Dies führt zu geringen Latenzzeiten und ermöglicht hohe Durchsatzraten für datenintensive Anwendungen.
+
+Verbesserte Leistung: Da In-Memory-Datenbanken Daten direkt im Speicher halten, können komplexe Abfragen und Datenverarbeitungsaufgaben schneller durchgeführt werden. Dies führt zu verbesserten Antwortzeiten und erhöhter Skalierbarkeit.
+
+Echtzeit-Verarbeitung: In-Memory-Datenbanken eignen sich gut für Echtzeit-Anwendungen, bei denen schnelle Aktualisierungen und Analysen von Daten erforderlich sind. Beispiele hierfür sind Echtzeit-Analytik, Echtzeit-Transaktionsverarbeitung, Betrugserkennung und Echtzeit-Benachrichtigungen.
+
+Effiziente Datenhaltung: Da In-Memory-Datenbanken auf die Verwendung von Festplatten oder anderen langsameren Medien verzichten, können sie effizienter mit Speicherplatz umgehen. Dies bedeutet, dass weniger Hardware-Ressourcen benötigt werden, um große Datenmengen zu verarbeiten.
+
+Nachteile:
+
+Begrenzter Speicherplatz: Der Hauptspeicher ist im Vergleich zu Festplatten oder Cloud-Speicher begrenzt. Daher können In-Memory-Datenbanken Schwierigkeiten haben, große Datenmengen zu verarbeiten, die nicht vollständig in den verfügbaren Speicher passen.
+
+Kosten: RAM ist in der Regel teurer als Festplatten- oder Cloud-Speicher. Der Einsatz von In-Memory-Datenbanken kann daher höhere Kosten für Hardware und Speicher verursachen.
+
+Persistenzherausforderungen: Da Daten ausschließlich im Hauptspeicher gehalten werden, gehen sie bei einem Stromausfall oder einem Neustart des Systems verloren. Um Daten dauerhaft zu speichern, müssen geeignete Mechanismen für die regelmäßige Sicherung oder den Schreibvorgang auf eine dauerhafte Speicherung implementiert werden.
+
+In-Memory-Datenbanken sind besonders gut geeignet für Anwendungen, die eine hohe Leistung, geringe Latenzzeiten und Echtzeitdatenverarbeitung erfordern. Sie bieten jedoch spezifische Herausforderungen im Hinblick auf Speicherplatz und Persistenz. Daher ist es wichtig, die Anforderungen Ihrer Anwendung und die damit verbundenen Vor- und Nachteile sorgfältig abzuwägen, bevor Sie sich für den Einsatz einer In-Memory-Datenbank entscheiden
+
+39. Welche Datenstrukturen gibt es in Redis?
+- Lists
+- sets
+- Hashes
+- Set-Operation
+
+40. Was versteht man unter der Levenshtein-Distanz? Wofür wird sie verwendet?
+- beschreibt die Ähnlichkeit zweier Zeichenketten anhand der Anzahl der
+benötigten Schritte, um die eine in die andere zu überführen
+
+ChatGPT:
+Die Levenshtein-Distanz, auch als Editierdistanz bekannt, ist ein Maß für die Unterschiede zwischen zwei Zeichenketten. Sie gibt an, wie viele Operationen erforderlich sind, um eine Zeichenkette in eine andere umzuwandeln, wobei drei grundlegende Operationen erlaubt sind: Einfügen, Löschen und Ersetzen eines einzelnen Zeichens.
+
+Die Levenshtein-Distanz zwischen zwei Zeichenketten wird als die minimale Anzahl von Operationen definiert, die erforderlich sind, um eine Zeichenkette in eine andere umzuwandeln. Jede Operation wird mit einem Kostenwert gewichtet (üblicherweise 1 für Einfügen, Löschen und Ersetzen). Die Distanz wird dann als die Summe der Kosten aller durchgeführten Operationen berechnet.
+
+Die Levenshtein-Distanz wird in verschiedenen Bereichen und Anwendungen eingesetzt:
+
+Rechtschreibprüfung: In der Rechtschreibprüfung wird die Levenshtein-Distanz verwendet, um ähnliche Wörter oder Vorschläge für fehlerhaft geschriebene Wörter zu finden. Wörter mit einer geringen Levenshtein-Distanz zum fehlerhaften Wort werden als mögliche Korrekturen betrachtet.
+
+Suche und Ähnlichkeitsvergleich: Die Levenshtein-Distanz kann verwendet werden, um die Ähnlichkeit von Zeichenketten zu vergleichen. Sie ermöglicht die Suche nach ähnlichen Wörtern oder Phrasen, die nicht exakt übereinstimmen.
+
+Genomsequenzierung: In der Bioinformatik wird die Levenshtein-Distanz verwendet, um Unterschiede zwischen DNA- oder RNA-Sequenzen zu messen. Sie hilft bei der Identifizierung von Mutationen, Variationen oder Genomvergleichen.
+
+Datenbereinigung: Die Levenshtein-Distanz kann bei der Datenbereinigung helfen, indem sie ähnliche oder potenziell duplizierte Datensätze in einer Datenbank identifiziert. Sie kann verwendet werden, um Unstimmigkeiten oder Fehler in Datensätzen zu erkennen und zu korrigieren.
+
+Die Levenshtein-Distanz ist ein vielseitiges Konzept und kann in verschiedenen Anwendungen verwendet werden, in denen der Grad der Ähnlichkeit oder Unterschiede zwischen Zeichenketten von Interesse ist.
+
+41. Nennen Sie Ansätze für unscharfe Suche in PostgreSQL.
+- Like
+- ILike
+- Regex (reguläre Ausdrücke)
+- Levenshtein-Distanz
+- Trigramme
+- Lexeme
+- Metaphone
+
+42. Was bewirkt SELECT * FROM actors WHERE metaphone(name,7) =metaphone('Jonny
+Knocksville',7); in einer PostgreSQL DB?
+
+Der SQL-Befehl SELECT * FROM actors WHERE metaphone(name, 7) = metaphone('Jonny Knocksville', 7); führt eine unscharfe Suche nach ähnlichen Werten in der Spalte name der Tabelle actors in einer PostgreSQL-Datenbank durch. Dabei wird das Konzept des Metaphon-Algorithmus verwendet.
+
+Der Metaphon-Algorithmus ist ein phonetischer Algorithmus, der dazu dient, ähnlich klingende Wörter oder Namen zu identifizieren, unabhängig von deren tatsächlicher Schreibweise. Es übersetzt Wörter oder Namen in eine phonetische Repräsentation, die ihre Aussprache darstellt. Dabei werden ähnliche Klänge zu ähnlichen phonetischen Codes abgebildet.
+
+In diesem Fall wird die Funktion metaphone() auf die Werte in der Spalte name angewendet. Sie erzeugt eine phonetische Repräsentation der Namen. Anschließend wird diese phonetische Repräsentation mit dem Ergebnis der Anwendung von metaphone() auf den Wert 'Jonny Knocksville' verglichen.
+
+Das Ergebnis dieser Abfrage wären alle Zeilen in der Tabelle actors, bei denen der phonetische Code der name-Spalte mit dem phonetischen Code von 'Jonny Knocksville' übereinstimmt. Dies würde ähnlich klingende Namen zurückgeben, die möglicherweise unterschiedlich geschrieben sind.
+
+Es ist wichtig zu beachten, dass die genaue Wirkung der metaphone()-Funktion von den Einstellungen und Konfigurationen abhängen kann, die in der PostgreSQL-Datenbank verwendet werden.
+(F.212)
+
+43. Wofür setzt man in PostgreSQL den Datentyp cube ein? Was liefert in diesem
+Zusammenhang cube_distance()?
+
+- um ein Feld mit Werten zu speichern, die einen Vektor bilden
+- mit der cube_distance()-Funktion können wir anhand des Genre-Cubes ermitteln, wie weit zwei Filme 
+voneinander entfernt sind (F. 219)
