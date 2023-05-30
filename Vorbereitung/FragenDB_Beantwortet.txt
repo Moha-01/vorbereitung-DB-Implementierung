@@ -378,16 +378,19 @@ Die Wahl zwischen JSON und XML hängt von den Anforderungen Ihrer Anwendung, den
 - Objekte können weitere Objekte beinhalten
 
 28. Was ist eine Collection in MongoDB? Erläutern Sie wichtige Eigenschaften.
-- in einer collection sind ähnliche documents zusammengefasst
+- in einer collection sind ähnliche documents zusammengefasst (Collection in MongoDB gruppiert verschiedene Datensätze und macht diese gemeinsam durchsuchbar und abrufbar)
  -> document ähnelt einer Zeile in RDBMS
  -> collection ähnelt einer Tabelle in RDBMS
  -> documents in einer collection müssen NICHT die selben Attribute
 haben
 
+
 29. Was versteht man unter _id in MongoDB und woraus besteht es?
 - _id ist ein Attribute
 - automatisch generiert
 - 12 Byte großer, hexadezimaler Schlüssel (fast immer eindeutig)
+- “_id” = spezielles Feld, das für jedes Dokument definiert pseudo-eindeutig festgelegt wird
+
 
 30. Was bewirkt der Befehl 
 db.students.find({wochenstunden: {$lt : 40}}) 
