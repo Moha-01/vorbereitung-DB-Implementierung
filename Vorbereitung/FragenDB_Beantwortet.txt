@@ -250,6 +250,7 @@ Anwendungen verwendet
 
 19. Bietet HBase Versionierung von Daten? Wenn ja, was ist hierfür notwendig?
 Ja, Zeitstempel(Unix epoch) ist notwendig
+manuelle Aktivierung Integer N als Parameter übergeben 
 
 20. Was versteht man unter Scan Filtering in HBase?
  Mechanismus zur Einschränkung der Ergebnisse einer Abfrage. 
@@ -257,6 +258,9 @@ Ja, Zeitstempel(Unix epoch) ist notwendig
  wenn Sie eine Reihe von Zeilen in einer Tabelle lesen, 
  können Sie einen Filter anwenden, um nur die Zeilen oder 
  Spalten zurückzugeben, die bestimmte Kriterien erfüllen.
+ 
+ ähnlich wie WHERE bei sql, also einfach Bedingungen für den Output, wobei HBase viele Standardfilter mitliefert
+(Anzeige mit “show_filters”) Bei Scan Filtering können auch mehrere Filter kombiniert werden
 
 21. Was bewirkt der Befehl scan 'customers', {COLUMNS => 'details:name', FILTER =>
 “ValueFilter(=,'binary:Amy')“} auf einer HBase DB?
@@ -322,6 +326,12 @@ HQL wird in erster Linie für datenintensive Aufgaben wie die Datenexploration, 
 24. In welchen Fällen würden Sie MongoDB einsetzen? Wann eher nicht?
 - Bei einer sehr großen Menge an unstrukturierten Daten
 - Um Objekte zu speichern (Einfache Standardisierung & Deserialisierung)
+- Echtzeit-Anwendungen
+
+Wann nicht:
+- Transaktionsintensive Anwendungen
+- Komplexe Joins und Abfragen
+- kleine Datenmenge
 
 25. Was versteht man unter einem Dokument in einer MongoDB? Welche Formate sind hier
 üblich?
@@ -333,6 +343,34 @@ HQL wird in erster Linie für datenintensive Aufgaben wie die Datenexploration, 
 - JSON ist kompakter
 - JSON erlaubt Felder
 - JSON passt bessert zum Ansatz OOP
+
+- Keine Kommentare
+
+Chat GPT:
+
+SON (JavaScript Object Notation) und XML (eXtensible Markup Language) sind beide Formate zur Darstellung strukturierter Daten. Hier sind einige Vor- und Nachteile von JSON im Vergleich zu XML:
+
+Vorteile von JSON im Vergleich zu XML:
+
+Einfachheit und Lesbarkeit: JSON hat eine einfachere und leichter lesbare Syntax als XML. Es verwendet eine klare und kompakte Darstellung von Datenstrukturen in Form von Schlüssel-Wert-Paaren, was die Lesbarkeit und das Verständnis erleichtert.
+
+Kompaktheit: JSON-Dokumente sind oft kompakter als ihre XML-Äquivalente. JSON verwendet weniger überflüssige Tags und benötigt weniger Text, um die gleichen Daten zu repräsentieren.
+
+Einfache Integration in JavaScript: JSON wurde als Teil von JavaScript entwickelt und lässt sich nahtlos in JavaScript-Anwendungen integrieren. Es kann leicht von JavaScript-Objekten in JSON und umgekehrt umgewandelt werden.
+
+Bessere Performance: Aufgrund seiner geringeren Komplexität und der effizienten Verarbeitung in JavaScript-basierten Umgebungen bietet JSON in der Regel eine bessere Performance als XML.
+
+Nachteile von JSON im Vergleich zu XML:
+
+Mangelnde Unterstützung für Metadaten: Im Vergleich zu XML bietet JSON weniger Möglichkeiten, Metadaten oder strukturelle Informationen über die Daten zu speichern. XML ermöglicht detaillierte Beschreibungen und Kommentare zu den Daten, während JSON sich auf die reine Darstellung der Daten konzentriert.
+
+Eingeschränkte Unterstützung für Typen: JSON unterstützt nur eine begrenzte Anzahl von Datentypen wie Zeichenketten, Zahlen, boolesche Werte usw. Im Vergleich dazu bietet XML die Möglichkeit, komplexe Datentypen und benutzerdefinierte Schemas zu definieren.
+
+Fehlende Standardisierung: Obwohl JSON weit verbreitet ist und von vielen Programmiersprachen und Datenbanken unterstützt wird, gibt es weniger standardisierte Regeln und Spezifikationen im Vergleich zu XML. XML hingegen hat eine umfangreiche Sammlung von Standards und Technologien, die für die Verarbeitung und Validierung von XML-Dokumenten verwendet werden können.
+
+Mangelnde Lesbarkeit für Menschen: Obwohl JSON aufgrund seiner kompakten Natur und einfachen Syntax für Computer leicht lesbar ist, kann es für Menschen schwieriger sein, die Struktur eines JSON-Dokuments auf den ersten Blick zu erfassen als bei XML, das eine klar definierte Struktur mit Tags hat.
+
+Die Wahl zwischen JSON und XML hängt von den Anforderungen Ihrer Anwendung, den vorhandenen Tools und der Integration in Ihre Technologiestack ab. Beide Formate haben ihre Stärken und Schwächen, und die Entscheidung sollte auf Basis dieser Faktoren getroffen werden.
 
 27. Was sind übliche Bestandteile eines JSON-Dokuments?
 - aus Paaren von Namen (attribut) und Wert
